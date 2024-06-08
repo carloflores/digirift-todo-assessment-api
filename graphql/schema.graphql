@@ -1,0 +1,62 @@
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+type Task {
+    id: ID!
+    title: String!
+    status: Boolean!
+    user_id: ID!
+}
+
+type Query {
+    users: [User!]! @all
+    tasks: [Task!]! 
+        @field(resolver: "App\\GraphQL\\Queries\\TaskQuery@__invoke")
+        @guard
+}
+
+type Mutation {
+    login(email: String!, password: String!): AuthPayload
+        @field(resolver: "App\\GraphQL\\Mutations\\LoginMutation@__invoke")
+    logout: Boolean
+        @field(resolver: "App\\GraphQL\\Mutations\\LogoutMutation@__invoke")
+        @guard
+    createTask(title: String!): TaskPayload
+        @field(resolver: "App\\GraphQL\\Mutations\\Task\\CreateMutation@__invoke")
+        @guard
+    updateTask(id: ID!, title: String!, status: Boolean!): TaskPayload
+        @field(resolver: "App\\GraphQL\\Mutations\\Task\\UpdateMutation@__invoke")
+        @guard
+    deleteTask(id: ID!): DeletePayload
+        @field(resolver: "App\\GraphQL\\Mutations\\Task\\DeleteMutation@__invoke")
+        @guard
+    deleteAllTask: DeletePayload
+        @field(resolver: "App\\GraphQL\\Mutations\\Task\\DeleteAllMutation@__invoke")
+        @guard
+    deleteTaskByStatus(status: Boolean!): DeletePayload
+        @field(resolver: "App\\GraphQL\\Mutations\\Task\\DeleteTaskByStatusMutation@__invoke")
+        @guard
+}
+
+type AuthPayload {
+    id: ID!
+    email: String!
+    name: String!
+    access_token: String!
+    token_type: String!
+    expires_in: Int!
+}
+
+type TaskPayload {
+    id: ID!
+    title: String!
+    status: Boolean
+    user_id: ID!
+}
+
+type DeletePayload {
+    msg: String!
+}
